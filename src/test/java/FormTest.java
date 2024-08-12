@@ -4,6 +4,7 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
 
+import static com.codeborne.selenide.Condition.text;
 import static com.codeborne.selenide.Selectors.byText;
 import static com.codeborne.selenide.Selenide.*;
 
@@ -16,8 +17,10 @@ public class FormTest {
     }
 
     @Test
-    void formCompleteSuccess() {
+    void formCompleteSuccessTest() {
         open("/automation-practice-form");
+        executeJavaScript("$('#fixedban').remove()");
+        executeJavaScript("$('footer').remove()");
         $("#firstName").setValue("Elena");
         $("#lastName").setValue("Voronina");
         $("#userEmail").setValue("elvor@mail.ru");
@@ -28,6 +31,7 @@ public class FormTest {
         $(".react-datepicker__month-select").selectOption("January");
         $(".react-datepicker__day--013:not(.react-datepicker__day--outside-month)").click();
         $("#subjectsInput").setValue("Physics").pressEnter();
+        $("#hobbiesWrapper").$(byText("Reading")).click();
         $("label[for=hobbies-checkbox-1]").click();
         $("label[for=hobbies-checkbox-2]").click();
         $("#currentAddress").setValue("Rosamund street, 10-34A");
@@ -39,8 +43,12 @@ public class FormTest {
         $("#submit").click();
 
         $(".modal-content").shouldBe(Condition.visible);
-        $(".modal-body").shouldHave(Condition.text("Elena"));
-        $(".modal-body").shouldHave(Condition.text("Voronina"));
+        $(".modal-body").shouldHave(text("Elena"), text("Voronina"), text("elvor@mail.ru"), text("Female"), text("8791096432"));
+        $(".modal-body").shouldHave(text("13 January,1981"));
+        $(".modal-body").shouldHave(text("Physics"), text("Sports"));
+        $(".modal-body").shouldHave(text("Screenshot 2024-07-28 114026.png"));
+        $(".modal-body").shouldHave(text("Rosamund street, 10-34A"));
+        $(".modal-body").shouldHave(text("Haryana"), text("Panipat"));
     }
 }
 
